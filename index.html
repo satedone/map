@@ -5,35 +5,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Карта України</title>
+    <link rel="stylesheet" href="styles/style.css">
 </head>
 
 <body>
-    <object id="ukraine-map" type="image/svg+xml" data="ukraine.svg" width="600" height="400"></object>
+    <div class="map-container">
+        <!-- SVG карта -->
+        <object id="ukraine-map" type="image/svg+xml" data="assets/ukraine.svg"></object>
 
-    <script>
-        // Дочекаємося завантаження сторінки
-        window.addEventListener('DOMContentLoaded', () => {
-            console.log("Сторінка завантажена!");
+        <!-- Інформація -->
+        <div id="info">Наведіть на область для перегляду інформації</div>
+    </div>
 
-            const map = document.getElementById('ukraine-map');
-
-            map.addEventListener('load', function () {
-
-                const svgDoc = map.contentDocument; // Доступ до вмісту SVG
-                const paths = svgDoc.querySelectorAll('path'); // Усі <path>
-
-                paths.forEach(path => {
-                    // Тимчасово встановимо атрибут style для тестування
-                    path.style.cursor = 'pointer';
-
-                    path.addEventListener('click', function () {
-                        console.log("Клік по елементу:", path);
-                        path.style.fill = 'red'; // Змінюємо колір при кліку
-                    });
-                });
-            });
-        });
-    </script>
+    <script src="scripts/main.js"></script>
 </body>
 
 </html>
