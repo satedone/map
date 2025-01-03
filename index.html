@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Карта України</title>
+</head>
+
+<body>
+    <object id="ukraine-map" type="image/svg+xml" data="ukraine.svg" width="600" height="400"></object>
+
+    <script>
+        // Дочекаємося завантаження сторінки
+        window.addEventListener('DOMContentLoaded', () => {
+            console.log("Сторінка завантажена!");
+
+            const map = document.getElementById('ukraine-map');
+
+            map.addEventListener('load', function () {
+
+                const svgDoc = map.contentDocument; // Доступ до вмісту SVG
+                const paths = svgDoc.querySelectorAll('path'); // Усі <path>
+
+                paths.forEach(path => {
+                    // Тимчасово встановимо атрибут style для тестування
+                    path.style.cursor = 'pointer';
+
+                    path.addEventListener('click', function () {
+                        console.log("Клік по елементу:", path);
+                        path.style.fill = 'red'; // Змінюємо колір при кліку
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
