@@ -1,37 +1,12 @@
+// main.js
+import { regions } from './regions.js';
+import { createCheckbox } from './checkbox.js';
+
 window.addEventListener('DOMContentLoaded', () => {
     const map = document.getElementById('ukraine-map');
-    const info = document.getElementById('info'); // Блок для відображення назви
 
-    // Об'єкт з відповідністю кодів областей і їх назв
-    const regions = {
-        "UA-40": "Місто Севастополь",
-        "UA-43": "АР Крим",
-        "UA-71": "Черкаська область",
-        "UA-74": "Чернігівська область",
-        "UA-77": "Чернівецька область",
-        "UA-12": "Дніпропетровська область (м. Дніпро)",
-        "UA-14": "Донецька область",
-        "UA-26": "Івано-Франківська область",
-        "UA-63": "Харківська область",
-        "UA-65": "Херсонська область",
-        "UA-68": "Хмельницька область",
-        "UA-30": "Київ (місто)",
-        "UA-32": "Київська область",
-        "UA-35": "Кіровоградська область (м. Кропивницький)",
-        "UA-09": "Луганська область",
-        "UA-46": "Львівська область",
-        "UA-48": "Миколаївська область",
-        "UA-51": "Одеська область",
-        "UA-53": "Полтавська область",
-        "UA-56": "Рівненська область",
-        "UA-59": "Сумська область",
-        "UA-61": "Тернопільська область",
-        "UA-21": "Закарпатська область (м. Ужгород)",
-        "UA-05": "Вінницька область",
-        "UA-07": "Волинська область",
-        "UA-23": "Запорізька область",
-        "UA-18": "Житомирська область"
-    };
+    // Створюємо чекбокс
+    const checkbox = createCheckbox();
 
     map.addEventListener('load', function () {
         const svgDoc = map.contentDocument; // Доступ до вмісту SVG
@@ -72,14 +47,17 @@ window.addEventListener('DOMContentLoaded', () => {
                 rect.style.fontSize = '14px';
                 rect.style.boxShadow = '2px 2px 6px rgba(0, 0, 0, 0.2)';
                 rect.textContent = regionName; // Виводимо назву області
+                rect.classList.add('region-label');
 
                 // Додаємо прямокутник на сторінку
                 document.body.appendChild(rect);
 
-                // Через кілька секунд зникає
-                // setTimeout(() => {
-                //     rect.remove(); // Видаляємо прямокутник після 3 секунд
-                // }, 3000);
+                // Видалення прямокутника, якщо чекбокс не активний
+                if (!checkbox.checked) {
+                    setTimeout(() => {
+                        rect.remove();
+                    }, 2000);
+                }
             });
         });
     });
