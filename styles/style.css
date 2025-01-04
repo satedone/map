@@ -50,15 +50,38 @@ body {
     stroke-width: 1.5px;
     /* Легке потовщення контуру при наведенні */
 }
-
-/* Блок інформації */
-#info {
-    position: absolute;
-    bottom: 10px;
-    left: 10px;
-    font-size: 18px;
-    background-color: rgba(255, 255, 255, 0.8);
-    padding: 10px;
+#info-container {
+    display: flex;
+    flex-direction: column;
+    /* Елементи розташовані вертикально */
+    align-items: flex-start;
+    /* Вирівнювання по лівому краю */
+    margin: 10px 0;
+    padding: 5px 10px;
+    border: 1px solid #ccc;
     border-radius: 5px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+#info-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+#info {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+#training-label,
+#keep-labels-label {
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }

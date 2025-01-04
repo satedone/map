@@ -13,10 +13,19 @@
         <!-- SVG карта -->
         <object id="ukraine-map" type="image/svg+xml" data="assets/ukraine.svg"></object>
 
-        <!-- Інформація -->
-        <div id="info">Наведіть на область для перегляду інформації</div>
+        <!-- Інформація та чекбокси -->
+        <div id="info-container">
+            <div id="info">Наведіть на область для перегляду інформації</div>
+            <label id="training-label">
+                <input type="checkbox" id="toggle-training" />
+                Режим навчання
+            </label>
+            <label id="keep-labels-label">
+                <input type="checkbox" id="toggle-keep-labels" />
+                Не видаляти підписи областей
+            </label>
+        </div>
     </div>
-
     <script type="module" src="scripts/main.js"></script>
 </body>
 
