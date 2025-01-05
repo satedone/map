@@ -87,3 +87,44 @@ function handleRegionClick(path) {
 window.addEventListener('DOMContentLoaded', () => {
     setupGame();
 });
+
+function addCityNamesToMap() {
+    const map = document.getElementById('ukraine-map');
+    const svgDoc = map.contentDocument;
+    const regionPaths = svgDoc.querySelectorAll('path');
+    const cityNamesGroup = svgDoc.createElementNS("http://www.w3.org/2000/svg", "g");
+
+    cityNamesGroup.setAttribute("id", "city-names");
+
+    const cityCoordinates = {
+        "Київ": { id: "kyiv", offsetX: 0, offsetY: -10 },
+        "Дніпро": { id: "dnipro", offsetX: 0, offsetY: -10 },
+        "Севастополь": { id: "sevastopol", offsetX: 0, offsetY: -10 },
+        "АР Крим": { id: "crimea", offsetX: 0, offsetY: -30 }
+    };
+
+    for (const [cityName, details] of Object.entries(cityCoordinates)) {
+        const region = svgDoc.getElementById(details.id);
+        if (region) {
+            const bbox = region.getBBox(); // Отримуємо межі регіону
+            const textX = bbox.x + bbox.width / 2 + details.offsetX;
+            const textY = bbox.y + bbox.height / 2 + details.offsetY;
+
+            const textElement = svgDoc.createElementNS("http://www.w3.org/2000/svg", "text");
+            textElement.setAttribute("x", textX);
+            textElement.setAttribute("y", textY);
+            textElement.setAttribute("fill", "red");
+            textElement.setAttribute("font-size", "14");
+            textElement.setAttribute("font-family", "Arial");
+            textElement.setAttribute("text-anchor", "middle");
+            textElement.textContent = cityName;
+
+            cityNamesGroup.appendChild(textElement);
+        }
+    }
+
+    svgDoc.querySelector("svg").appendChild(cityNamesGroup);
+}
+
+// Викликаємо функцію після завантаження SVG
+document.getElementById('ukraine-map').addEventListener('load', addCityNamesToMap);

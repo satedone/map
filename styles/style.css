@@ -68,6 +68,7 @@ label {
     display: flex;
     flex-direction: column; /* Встановлює елементи в колонку */
     align-items: flex-start; /* Вирівнює елементи по лівому краю */
+    padding-top: 15px;
     gap: 5px; /* Відступ між елементами */
 }
 
