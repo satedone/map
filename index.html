@@ -16,17 +16,28 @@
         <!-- Інформація та чекбокси -->
         <div id="info-container">
             <div id="info">Наведіть на область для перегляду інформації</div>
-            <label id="training-label">
+            <label>
                 <input type="checkbox" id="toggle-training" />
                 Режим навчання
             </label>
-            <label id="keep-labels-label">
-                <input type="checkbox" id="toggle-keep-labels" />
+            <label>
+                <input type="checkbox" id="toggle-labels" />
                 Не видаляти підписи областей
             </label>
+            <button id="start-game">Початок гри</button>
+
+            <!-- Випадковий регіон та інформація про гру -->
+            
+            <div class="game-info">
+                <div class="timer">Час: 0 сек</div>
+                <div class="score">Рахунок: 17</div>
+            </div>
+            <div id="random-region-name" class="random-region-name"></div>
         </div>
     </div>
+
     <script type="module" src="scripts/main.js"></script>
+
 </body>
 
 </html>

@@ -1,87 +1,89 @@
 import { regions } from './regions.js';
 
-function setupTrainingCheckbox(map) {
-    const trainingCheckbox = document.getElementById('toggle-training');
+let gameInterval;
+let timerInterval;
+let timeLeft = 20; // Початковий час (20 секунд)
+let score = 0;
+let isGameStarted = false; // Флаг, чи почалася гра
+let activeRegionName = ""; // Збереження поточного регіону
+let activeRegionId = ""; // Збереження ID активного регіону
 
-    trainingCheckbox.addEventListener('change', () => {
+function setupGame() {
+    const startButton = document.getElementById('start-game');
+    const randomRegionNameElement = document.getElementById('random-region-name');
+    const timerElement = document.querySelector('.timer');
+    const scoreElement = document.querySelector('.score');
+    const map = document.getElementById('ukraine-map');
+
+    // Завантаження SVG-контенту
+    map.addEventListener('load', () => {
         const svgDoc = map.contentDocument;
-        const cityNamesGroup = svgDoc.getElementById('city-names');
+        const regionPaths = svgDoc.querySelectorAll('path');
 
-        if (trainingCheckbox.checked) {
-            cityNamesGroup.style.display = 'block'; // Показати назви міст
-        } else {
-            cityNamesGroup.style.display = 'none'; // Приховати назви міст
-        }
+        // Додаємо обробник натискання кнопки "Початок гри"
+        startButton.addEventListener('click', () => {
+            if (!isGameStarted) {
+                // Скидаємо таймер та рахунок
+                timeLeft = 20;
+                score = 0;
+                isGameStarted = true;
+                randomRegionNameElement.style.display = 'none';
+                scoreElement.textContent = `Рахунок: ${score}`;
+                timerElement.textContent = `Час: ${timeLeft} сек`;
+
+                // Запускаємо таймер
+                if (timerInterval) clearInterval(timerInterval);
+                timerInterval = setInterval(updateTimer, 1000);
+
+                // Початок гри
+                showRandomRegion(randomRegionNameElement, regionPaths);
+            }
+        });
+
+        // Додаємо єдиний обробник для всіх регіонів
+        regionPaths.forEach((path) => {
+            path.addEventListener('click', () => handleRegionClick(path));
+            path.addEventListener('mouseover', () => {
+                path.style.fill = '#FFD700'; // Зміна кольору при наведенні
+            });
+            path.addEventListener('mouseout', () => {
+                path.style.fill = ''; // Скидання кольору
+            });
+        });
     });
 }
 
-function setupKeepLabelsCheckbox() {
-    const keepLabelsCheckbox = document.getElementById('toggle-keep-labels');
+function updateTimer() {
+    const timerElement = document.querySelector('.timer');
+    if (timeLeft > 0) {
+        timeLeft--;
+        timerElement.textContent = `Час: ${timeLeft} сек`;
+    } else {
+        clearInterval(timerInterval);
+        alert('Гра завершена! Ваш рахунок: ' + score);
+        isGameStarted = false; // Скидаємо стан гри
+    }
+}
 
-    // Додаємо функціонал, якщо буде потрібний (наприклад, для подальшої інтеграції)
-    console.log(
-        'Чекбокс "Не видаляти підписи областей" підключений, стан:',
-        keepLabelsCheckbox.checked
-    );
+function showRandomRegion(element, regionPaths) {
+    const randomRegionIndex = Math.floor(Math.random() * Object.keys(regions).length);
+    activeRegionName = Object.values(regions)[randomRegionIndex]; // Зберігаємо активний регіон
+    activeRegionId = Object.keys(regions)[randomRegionIndex]; // Зберігаємо ID активного регіону
+    element.textContent = activeRegionName;
+    element.style.display = 'block';
+}
+
+function handleRegionClick(path) {
+    const regionId = path.getAttribute('id');
+    if (regionId === activeRegionId) {
+        score++;
+        document.querySelector('.score').textContent = `Рахунок: ${score}`;
+        document.getElementById('random-region-name').style.display = 'none'; // Сховати випадковий регіон після правильного вибору
+        const regionPaths = path.ownerDocument.querySelectorAll('path');
+        showRandomRegion(document.getElementById('random-region-name'), regionPaths); // Показуємо наступний випадковий регіон
+    }
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-    const map = document.getElementById('ukraine-map');
-
-    map.addEventListener('load', function () {
-        const svgDoc = map.contentDocument; // Доступ до вмісту SVG
-        const paths = svgDoc.querySelectorAll('path'); // Усі <path>
-
-        paths.forEach(path => {
-            const regionCode = path.getAttribute('id'); // Отримуємо код області
-            const regionName = regions[regionCode] || "Невідома область"; // Перетворюємо код в назву
-
-            // Додаємо стиль для курсора
-            path.style.cursor = 'pointer';
-
-            // Подія наведення миші
-            path.addEventListener('mouseover', function () {
-                path.style.fill = 'blue'; // Колір при наведенні
-            });
-
-            // Подія відведення миші
-            path.addEventListener('mouseout', function () {
-                path.style.fill = ''; // Повернення до початкового кольору
-            });
-
-            // Подія натискання
-            path.addEventListener('click', function (event) {
-                const mouseX = event.pageX;
-                const mouseY = event.pageY;
-
-                // Створюємо прямокутник для назви
-                const rect = document.createElement('div');
-                rect.style.position = 'absolute';
-                rect.style.left = `${mouseX + 10}px`;
-                rect.style.top = `${mouseY + 10}px`;
-                rect.style.padding = '8px';
-                rect.style.backgroundColor = '#fff';
-                rect.style.border = '1px solid #000';
-                rect.style.borderRadius = '4px';
-                rect.style.fontSize = '14px';
-                rect.style.boxShadow = '2px 2px 6px rgba(0, 0, 0, 0.2)';
-                rect.textContent = regionName; // Виводимо назву області
-                rect.classList.add('region-label');
-
-                document.body.appendChild(rect);
-
-                // Видалення через 2 секунди, якщо "Не видаляти підписи" не увімкнено
-                const keepLabelsCheckbox = document.getElementById('toggle-keep-labels');
-                if (!keepLabelsCheckbox.checked) {
-                    setTimeout(() => {
-                        rect.remove();
-                    }, 2000);
-                }
-            });
-        });
-
-        // Налаштовуємо чекбокси
-        setupTrainingCheckbox(map);
-        setupKeepLabelsCheckbox();
-    });
+    setupGame();
 });
