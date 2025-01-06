@@ -17,16 +17,9 @@
         <div id="info-container">
             <div id="info">Наведіть на область для перегляду інформації</div>
             <label>
-                <input type="checkbox" id="toggle-training" />
-                Режим навчання
+                <input type="checkbox" id="learning-mode" /> Режим Навчання
             </label>
-            <label>
-                <input type="checkbox" id="toggle-hints" />
-                Режим підказок
-            </label>
-
             <button id="start-game">Початок гри</button>
-
             <!-- Випадковий регіон та інформація про гру -->
             <div id="random-region-name" class="random-region-name"></div>
             <div class="game-info">
@@ -36,7 +29,9 @@
         </div>
     </div>
 
+    <script type="module" src="scripts/learningMode.js"></script>
     <script type="module" src="scripts/main.js"></script>
+
 </body>
 
 </html>

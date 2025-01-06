@@ -1,12 +1,13 @@
 import { regions } from './regions.js';
+import { toggleCityNamesVisibility } from './learningMode.js';
 
 let gameInterval;
 let timerInterval;
-let timeLeft = 20; // Початковий час (20 секунд)
+let timeLeft = 20;
 let score = 0;
-let isGameStarted = false; // Флаг, чи почалася гра
-let activeRegionName = ""; // Збереження поточного регіону
-let activeRegionId = ""; // Збереження ID активного регіону
+let isGameStarted = false;
+let activeRegionName = "";
+let activeRegionId = "";
 
 function setupGame() {
     const startButton = document.getElementById('start-game');
@@ -15,15 +16,12 @@ function setupGame() {
     const scoreElement = document.querySelector('.score');
     const map = document.getElementById('ukraine-map');
 
-    // Завантаження SVG-контенту
     map.addEventListener('load', () => {
         const svgDoc = map.contentDocument;
         const regionPaths = svgDoc.querySelectorAll('path');
 
-        // Додаємо обробник натискання кнопки "Початок гри"
         startButton.addEventListener('click', () => {
             if (!isGameStarted) {
-                // Скидаємо таймер та рахунок
                 timeLeft = 20;
                 score = 0;
                 isGameStarted = true;
@@ -31,23 +29,20 @@ function setupGame() {
                 scoreElement.textContent = `Рахунок: ${score}`;
                 timerElement.textContent = `Час: ${timeLeft} сек`;
 
-                // Запускаємо таймер
                 if (timerInterval) clearInterval(timerInterval);
                 timerInterval = setInterval(updateTimer, 1000);
 
-                // Початок гри
                 showRandomRegion(randomRegionNameElement, regionPaths);
             }
         });
 
-        // Додаємо єдиний обробник для всіх регіонів
         regionPaths.forEach((path) => {
             path.addEventListener('click', () => handleRegionClick(path));
             path.addEventListener('mouseover', () => {
-                path.style.fill = '#FFD700'; // Зміна кольору при наведенні
+                path.style.fill = '#FFD700';
             });
             path.addEventListener('mouseout', () => {
-                path.style.fill = ''; // Скидання кольору
+                path.style.fill = '';
             });
         });
     });
@@ -61,14 +56,14 @@ function updateTimer() {
     } else {
         clearInterval(timerInterval);
         alert('Гра завершена! Ваш рахунок: ' + score);
-        isGameStarted = false; // Скидаємо стан гри
+        isGameStarted = false;
     }
 }
 
 function showRandomRegion(element, regionPaths) {
     const randomRegionIndex = Math.floor(Math.random() * Object.keys(regions).length);
-    activeRegionName = Object.values(regions)[randomRegionIndex]; // Зберігаємо активний регіон
-    activeRegionId = Object.keys(regions)[randomRegionIndex]; // Зберігаємо ID активного регіону
+    activeRegionName = Object.values(regions)[randomRegionIndex];
+    activeRegionId = Object.keys(regions)[randomRegionIndex];
     element.textContent = activeRegionName;
     element.style.display = 'block';
 }
@@ -76,6 +71,7 @@ function showRandomRegion(element, regionPaths) {
 function handleRegionClick(path) {
     const regionId = path.getAttribute('id');
     if (regionId === activeRegionId) {
+        if (!isGameStarted) return; // Якщо гра завершилась, нічого не робимо для рахунку
         score++;
         document.querySelector('.score').textContent = `Рахунок: ${score}`;
         document.getElementById('random-region-name').style.display = 'none'; // Сховати випадковий регіон після правильного вибору
@@ -84,47 +80,8 @@ function handleRegionClick(path) {
     }
 }
 
+
 window.addEventListener('DOMContentLoaded', () => {
     setupGame();
+    toggleCityNamesVisibility('ukraine-map', 'learning-mode');
 });
-
-function addCityNamesToMap() {
-    const map = document.getElementById('ukraine-map');
-    const svgDoc = map.contentDocument;
-    const regionPaths = svgDoc.querySelectorAll('path');
-    const cityNamesGroup = svgDoc.createElementNS("http://www.w3.org/2000/svg", "g");
-
-    cityNamesGroup.setAttribute("id", "city-names");
-
-    const cityCoordinates = {
-        "Київ": { id: "kyiv", offsetX: 0, offsetY: -10 },
-        "Дніпро": { id: "dnipro", offsetX: 0, offsetY: -10 },
-        "Севастополь": { id: "sevastopol", offsetX: 0, offsetY: -10 },
-        "АР Крим": { id: "crimea", offsetX: 0, offsetY: -30 }
-    };
-
-    for (const [cityName, details] of Object.entries(cityCoordinates)) {
-        const region = svgDoc.getElementById(details.id);
-        if (region) {
-            const bbox = region.getBBox(); // Отримуємо межі регіону
-            const textX = bbox.x + bbox.width / 2 + details.offsetX;
-            const textY = bbox.y + bbox.height / 2 + details.offsetY;
-
-            const textElement = svgDoc.createElementNS("http://www.w3.org/2000/svg", "text");
-            textElement.setAttribute("x", textX);
-            textElement.setAttribute("y", textY);
-            textElement.setAttribute("fill", "red");
-            textElement.setAttribute("font-size", "14");
-            textElement.setAttribute("font-family", "Arial");
-            textElement.setAttribute("text-anchor", "middle");
-            textElement.textContent = cityName;
-
-            cityNamesGroup.appendChild(textElement);
-        }
-    }
-
-    svgDoc.querySelector("svg").appendChild(cityNamesGroup);
-}
-
-// Викликаємо функцію після завантаження SVG
-document.getElementById('ukraine-map').addEventListener('load', addCityNamesToMap);
